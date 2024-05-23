@@ -51,6 +51,7 @@ void fix_lengths(std::vector<std::string>& values, int target_size)
     }
 }
 
+#ifndef WIN32
 bool create_udev_file()
 {
     std::filesystem::path cwd =
@@ -98,6 +99,7 @@ std::string run_system_command(std::string command)
 
     return result;
 }
+#endif
 
 }  // namespace internal
 

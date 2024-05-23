@@ -7,6 +7,7 @@ CameraException::CameraException(std::string error_message,
                                  ASI_ERROR_CODE error_code,
                                  bool udev)
 {
+#ifndef WIN32
     if (udev)
     {
         bool udev_created = internal::create_udev_file();
@@ -33,6 +34,13 @@ CameraException::CameraException(std::string error_message,
         error_message_ = u.str();
         return;
     }
+#else
+    if (udev)
+    {
+        error_message_ = "ASI Camera: No udev on Windows";
+        return;
+    }
+#endif
 
     std::ostringstream s;
     s << "ASI Camera: "
