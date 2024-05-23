@@ -2,11 +2,6 @@ cmake_minimum_required(VERSION 3.18)
 
 project(zwo_asi VERSION 0.1)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_C_EXTENSIONS OFF)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # Common installation directories
 include(GNUInstallDirs)
 
@@ -71,7 +66,15 @@ target_include_directories(zwo_asi PUBLIC
    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
    ${ASI_INCLUDE_DIR} 
    )
- target_link_libraries(zwo_asi ${LIBASICAMERA_PATH} ${LIBUSB_LIBRARIES} Threads::Threads)
+target_link_libraries(zwo_asi
+    PUBLIC ${LIBASICAMERA_PATH} ${LIBUSB_LIBRARIES} Threads::Threads
+    )
+set_target_properties(zwo_asi PROPERTIES
+    CXX_STANDARD 17
+    C_EXTENSIONS OFF
+    CXX_EXTENSIONS OFF
+    CXX_STANDARD_REQUIRED ON
+    )
 
 #################################
 # python bindings over zwo_asi #
@@ -84,8 +87,12 @@ else()
 endif()
 pybind11_add_module(pybind11_bindings MODULE srcpy/bindings.cpp)
 set_target_properties(pybind11_bindings PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/zwo_asi
-  OUTPUT_NAME "bindings"
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/zwo_asi
+    OUTPUT_NAME "bindings"
+    CXX_STANDARD 17
+    C_EXTENSIONS OFF
+    CXX_EXTENSIONS OFF
+    CXX_STANDARD_REQUIRED ON
   )
 target_link_libraries(pybind11_bindings
   PUBLIC zwo_asi::zwo_asi ${LIBASICAMERA_PATH}
