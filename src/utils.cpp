@@ -1,3 +1,5 @@
+#define NOMINMAX  // prevent windows.h from defining min and max macros
+
 #include "zwo_asi/utils.hpp"
 
 namespace zwo_asi
