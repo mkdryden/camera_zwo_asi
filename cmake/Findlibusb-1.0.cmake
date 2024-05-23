@@ -10,7 +10,7 @@ if(NOT LIBUSB_FOUND)
                    /opt/local/include/libusb-1.0
    )
 
-   find_library(LIBUSB_LIBRARIES NAMES usb-1.0
+   find_library(LIBUSB_LIBRARIES NAMES usb-1.0 libusb-1.0
                 PATHS ${LIBUSB_PKG_LIBRARY_DIRS}
                       /usr/lib
                       /usr/local/lib

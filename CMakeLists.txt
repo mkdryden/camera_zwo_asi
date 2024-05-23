@@ -20,7 +20,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake
 find_package(Python3 COMPONENTS Interpreter Development)
 find_package(pybind11 REQUIRED)
 find_package(Python3 COMPONENTS Interpreter)
-find_package(USB REQUIRED)
+find_package(libusb-1.0 REQUIRED)
 find_package(Threads REQUIRED)
 
 
