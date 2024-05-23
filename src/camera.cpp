@@ -1,5 +1,14 @@
 #include "zwo_asi/camera.hpp"
 
+#ifdef WIN32
+#include <thread>
+
+void usleep(__int64 usec)
+{
+    std::this_thread::sleep_for(std::chrono::microseconds(usec));
+}
+#endif
+
 namespace zwo_asi
 {
 std::string get_sdk_version()
