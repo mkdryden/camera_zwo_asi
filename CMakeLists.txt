@@ -120,6 +120,7 @@ install(
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
 
+if(WIN32)
 install(
     TARGETS pybind11_bindings
     COMPONENT bindings
@@ -131,5 +132,12 @@ install(
     ARCHIVE DESTINATION ${ASI_CAMS_INSTALL_PREFIX}
     RUNTIME DESTINATION ${ASI_CAMS_INSTALL_PREFIX}
     )
-
-  
+else()
+    install(
+            TARGETS pybind11_bindings
+            COMPONENT bindings
+            LIBRARY DESTINATION ${ASI_CAMS_INSTALL_PREFIX}
+            ARCHIVE DESTINATION ${ASI_CAMS_INSTALL_PREFIX}
+            RUNTIME DESTINATION ${ASI_CAMS_INSTALL_PREFIX}
+    )
+endif()
