@@ -28,8 +28,8 @@ void fix_length(std::string& v, int target_size);
 void fix_lengths(std::vector<std::string>& values, int target_size);
 std::vector<std::string> long_to_str(const std::vector<long>& values);
 
-#ifndef WIN32
 bool create_udev_file();
+#ifndef WIN32
 std::string run_system_command(std::string command);
 #endif
 

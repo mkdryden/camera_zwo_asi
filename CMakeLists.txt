@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.21)
 
 project(zwo_asi VERSION 0.1)
 
@@ -22,22 +22,31 @@ find_package(Threads REQUIRED)
 #####################################
 # armv7 or x64 or ... zwo library ? #
 #####################################
-
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6")
-  set(LIBASICAMERA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/armv6/libASICamera2.a)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "armv7")
-  set(LIBASICAMERA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/armv7/libASICamera2.a)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "armv8")
-  set(LIBASICAMERA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/armv8/libASICamera2.a)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
-  # confusing ! but that works on Raspberry Pi4 Model B Rev 1.5 (call: cat /proc/cpuinfo)
-  set(LIBASICAMERA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/armv8/libASICamera2.a)
-elseif(APPLE)
-  set(LIBASICAMERA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/mac/libASICamera2.a)
-elseif(WIN32)
-  set(LIBASICAMERA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/windows/x64/ASICamera2.lib)
+if(WIN32)
+    add_library(asi_lib SHARED IMPORTED)
+    set_target_properties(asi_lib PROPERTIES
+            IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/windows/x64/ASICamera2.dll
+            IMPORTED_IMPLIB ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/windows/x64/ASICamera2.lib
+    )
 else()
-  set(LIBASICAMERA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/x64/libASICamera2.a)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "armv6")
+      set(LIBASICAMERA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/armv6/libASICamera2.a)
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "armv7")
+      set(LIBASICAMERA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/armv7/libASICamera2.a)
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "armv8")
+      set(LIBASICAMERA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/armv8/libASICamera2.a)
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
+      # confusing ! but that works on Raspberry Pi4 Model B Rev 1.5 (call: cat /proc/cpuinfo)
+      set(LIBASICAMERA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/armv8/libASICamera2.a)
+    elseif(APPLE)
+      set(LIBASICAMERA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/mac/libASICamera2.a)
+    else()
+      set(LIBASICAMERA_PATH ${CMAKE_CURRENT_SOURCE_DIR}/asi_libs/x64/libASICamera2.a)
+    endif()
+    add_library(asi_lib STATIC IMPORTED)
+    set_target_properties(asi_lib PROPERTIES
+            IMPORTED_LOCATION ${LIBASICAMERA_PATH}
+    )
 endif()
 
 
@@ -67,7 +76,7 @@ target_include_directories(zwo_asi PUBLIC
    ${ASI_INCLUDE_DIR} 
    )
 target_link_libraries(zwo_asi
-    PUBLIC ${LIBASICAMERA_PATH} ${LIBUSB_LIBRARIES} Threads::Threads
+    PUBLIC asi_lib ${LIBUSB_LIBRARIES} Threads::Threads
     )
 set_target_properties(zwo_asi PROPERTIES
     CXX_STANDARD 17
@@ -95,7 +104,7 @@ set_target_properties(pybind11_bindings PROPERTIES
     CXX_STANDARD_REQUIRED ON
   )
 target_link_libraries(pybind11_bindings
-  PUBLIC zwo_asi::zwo_asi ${LIBASICAMERA_PATH}
+  PUBLIC zwo_asi::zwo_asi asi_lib
   )
 
 ###########
@@ -114,6 +123,10 @@ install(
 install(
     TARGETS pybind11_bindings
     COMPONENT bindings
+    RUNTIME_DEPENDENCIES
+    PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-" "python"
+    POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
+    DIRECTORIES $<TARGET_FILE_DIR:pybind11_bindings>
     LIBRARY DESTINATION ${ASI_CAMS_INSTALL_PREFIX}
     ARCHIVE DESTINATION ${ASI_CAMS_INSTALL_PREFIX}
     RUNTIME DESTINATION ${ASI_CAMS_INSTALL_PREFIX}

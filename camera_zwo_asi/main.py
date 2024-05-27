@@ -3,7 +3,7 @@ console scripts
 """
 
 import os
-import sys
+import platform
 import argparse
 from pathlib import Path
 from .camera import Camera
@@ -16,8 +16,8 @@ def udev():
     """
     creates a files called 99-asi.rules and provides instruction on how to install it
     """
-    if sys.platform == 'darwin':
-        print('\nNo action is needed to enable the USB connection on MacOS.')
+    if platform.system != 'Linux':
+        print('\nNo action is needed to enable the USB connection on this platform.')
         return
 
     create_udev_file()

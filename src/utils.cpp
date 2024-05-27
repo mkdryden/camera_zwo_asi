@@ -101,7 +101,13 @@ std::string run_system_command(std::string command)
 
     return result;
 }
+#else
+bool create_udev_file()
+{
+    return true;
+}
 #endif
+
 
 }  // namespace internal
 
