@@ -3,6 +3,7 @@ console scripts
 """
 
 import os
+import platform
 import argparse
 from pathlib import Path
 from .camera import Camera
@@ -15,6 +16,10 @@ def udev():
     """
     creates a files called 99-asi.rules and provides instruction on how to install it
     """
+    if platform.system != 'Linux':
+        print('\nNo action is needed to enable the USB connection on this platform.')
+        return
+
     create_udev_file()
     print("\nThe file 99-asi.rules has been created in the current directory.")
     print("You may install it: 'sudo install 99-asi.rules /lib/udev/rules.d'")

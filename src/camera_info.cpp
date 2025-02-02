@@ -9,6 +9,7 @@ static bool get_bool(ASI_BOOL value)
     return false;
 }
 
+#ifndef WIN32
 void check_system_udev()
 {
     std::string command(UDEV_CHECK);
@@ -19,6 +20,7 @@ void check_system_udev()
         throw CameraException("udev error", -1, ASI_ERROR_GENERAL_ERROR, true);
     }
 }
+#endif
 
 int get_nb_cameras()
 {

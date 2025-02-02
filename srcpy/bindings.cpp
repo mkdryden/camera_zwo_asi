@@ -95,6 +95,7 @@ PYBIND11_MODULE(bindings, m)
   m.def("get_sdk_version", &get_sdk_version);
   m.def("close_camera", &close_camera);
   m.def("create_udev_file", &internal::create_udev_file);
+
   
   pybind11::class_<Camera>(m, "Camera")
     .def(pybind11::init<int>())

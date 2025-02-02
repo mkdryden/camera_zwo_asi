@@ -1,7 +1,11 @@
 #pragma once
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifndef WIN32
 #include <unistd.h>
+#endif
+
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -23,8 +27,11 @@ int max_size(const std::vector<std::string> values);
 void fix_length(std::string& v, int target_size);
 void fix_lengths(std::vector<std::string>& values, int target_size);
 std::vector<std::string> long_to_str(const std::vector<long>& values);
+
 bool create_udev_file();
+#ifndef WIN32
 std::string run_system_command(std::string command);
+#endif
 
 }  // namespace internal
 
